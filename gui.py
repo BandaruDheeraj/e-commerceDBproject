@@ -64,7 +64,7 @@ def main():
         WHERE i.Ecommerce_ID = 605775548
         GROUP BY i.Inventory_ID, p.Product_ID, p.Description, p.Price, i.Quantity
         ORDER BY Total_Products DESC
-        LIMIT 10;""",
+        LIMIT {};""",
     }
 
     # Display the radio buttons
@@ -77,11 +77,13 @@ def main():
     # Get the selected query
     selected_query = queries[choice]
 
-    # Get user input
-    user_input = st.text_input('Enter your input')
+    # Check if the selected query requires a limit
+    if 'LIMIT {}' in selected_query:
+        # Get user input for limit
+        user_input = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
 
-    # Modify the selected query with the user input
-    selected_query = selected_query.format(user_input)
+        # Modify the selected query with the user input
+        selected_query = selected_query.format(user_input)
 
 
     # Run the selected query when the button is clicked
