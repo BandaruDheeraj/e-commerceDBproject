@@ -7,31 +7,63 @@ def main():
     db = "ecommerceDB"
 
 
-    @st.cache(allow_output_mutation=True)
-    def execute_query(database, query):
+    # @st.cache(allow_output_mutation=True)
+    # def execute_query(database, query):
+    #     # Define your connection details
+    #     conn_details = {
+    #         'host': 'localhost',
+    #         'user': 'root',
+    #         'password': '<M6a0n6h3a7t5t9a1n3>',
+    #         'database': db
+    #     }
+
+    #     # Create a new connection
+    #     conn = mysql.connector.connect(**conn_details)
+
+    #     # Create a new cursor
+    #     cursor = conn.cursor()
+
+    #     # Execute the query
+    #     cursor.execute(query)
+
+
+
+    #     # Fetch the results into a pandas DataFrame
+    #     # df = pd.DataFrame(cursor.fetchall(), columns=[i[0] for i in cursor.description])
+
+    #     rows = cursor.fetchall()  # This fetches all rows returned by the query
+    #     df = pd.read_sql_query(query, conn)
+
+    #     # Close the cursor and connection
+    #     cursor.close()
+    #     conn.close()
+
+    #     return df
+
+    def execute_query(db, query):
         # Define your connection details
-        conn_details = {
-            'host': 'localhost',
-            'user': 'root',
-            'password': '<M6a0n6h3a7t5t9a1n3>',
-            'database': database
-        }
+        myConnection = mysql.connector.connect(user = 'root', 
+                                       password = '<M6a0n6h3a7t5t9a1n3>',
+                                       host = 'localhost', 
+                                       database = 'ecommerceDB') 
 
         # Create a new connection
-        conn = mysql.connector.connect(**conn_details)
+        cursorObject = myConnection.cursor() 
 
         # Create a new cursor
-        cursor = conn.cursor()
+        # cursor = conn.cursor()
 
         # Execute the query
-        cursor.execute(query)
+        cursorObject.execute(query)
 
         # Fetch the results into a pandas DataFrame
-        df = pd.DataFrame(cursor.fetchall(), columns=[i[0] for i in cursor.description])
+        # df = pd.DataFrame(cursor.fetchall(), columns=[i[0] for i in cursor.description])
 
-        # Close the cursor and connection
-        cursor.close()
-        conn.close()
+        df = pd.read_sql_query(query, myConnection)
+
+        # # Close the cursor and connection
+        cursorObject.close() 
+        myConnection.close() 
 
         return df
 
@@ -109,4 +141,3 @@ def main():
             
 if __name__ == "__main__":
     main()
-
