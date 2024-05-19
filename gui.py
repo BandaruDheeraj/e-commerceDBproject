@@ -1,72 +1,30 @@
+
 import mysql.connector
 import pandas as pd
 import streamlit as st
-
+import connection
 
 def main():
     db = "ecommerceDB"
 
 
     # @st.cache(allow_output_mutation=True)
-    # def execute_query(database, query):
-    #     # Define your connection details
-    #     conn_details = {
-    #         'host': 'localhost',
-    #         'user': 'root',
-    #         'password': '<M6a0n6h3a7t5t9a1n3>',
-    #         'database': db
-    #     }
-
-    #     # Create a new connection
-    #     conn = mysql.connector.connect(**conn_details)
-
-    #     # Create a new cursor
-    #     cursor = conn.cursor()
-
-    #     # Execute the query
-    #     cursor.execute(query)
-
-
-
-    #     # Fetch the results into a pandas DataFrame
-    #     # df = pd.DataFrame(cursor.fetchall(), columns=[i[0] for i in cursor.description])
-
-    #     rows = cursor.fetchall()  # This fetches all rows returned by the query
-    #     df = pd.read_sql_query(query, conn)
-
-    #     # Close the cursor and connection
-    #     cursor.close()
-    #     conn.close()
-
-    #     return df
-
-    def execute_query(db, query):
+    def execute_query(query):
         # Define your connection details
-        myConnection = mysql.connector.connect(user = 'root', 
-                                       password = '<M6a0n6h3a7t5t9a1n3>',
-                                       host = 'localhost', 
-                                       database = 'ecommerceDB') 
-
-        # Create a new connection
-        cursorObject = myConnection.cursor() 
-
-        # Create a new cursor
-        # cursor = conn.cursor()
+        cur, conn = connection.get_connection()
 
         # Execute the query
-        cursorObject.execute(query)
+        cur.execute(query)
+        cur.fetchall() 
 
         # Fetch the results into a pandas DataFrame
-        # df = pd.DataFrame(cursor.fetchall(), columns=[i[0] for i in cursor.description])
-
-        df = pd.read_sql_query(query, myConnection)
+        df = pd.read_sql_query(query, conn)
 
         # # Close the cursor and connection
-        cursorObject.close() 
-        myConnection.close() 
+        cur.close() 
+        conn.close() 
 
         return df
-
 
     # Page title
     st.set_page_config(page_title='🦜🔗 E-Commerce App MPCS 53001')
@@ -77,7 +35,17 @@ def main():
     Welcome to our e-commerce store! Please select one of the following queries from below to get started
     """)
 
+    # # Example of a KQL query format
+    # st.subheader('Required KQL Query Format:')
+    # st.code("""      
+    # TableName
+    # | where ColumnName == 'Value'
+    # | project ColumnName1, ColumnName2
+    # | take 10
+    # """, language='sql')
 
+    # Define the queries
+    
     # Define the queries
     queries = {
         'Retrieve all orders for a customer, including order details, product details, and supplier information, where the order starts from Chicago.': """ SELECT o.Order_ID, o.Date_Placed, o.Status, od.Start_City, od.End_City, p.Description, p.Price, s.Supplier_Name
@@ -135,7 +103,7 @@ def main():
     if st.button('Run query'):
         finalQuery = selected_query
         print(finalQuery)
-        finalResult = execute_query(db, finalQuery)
+        finalResult = execute_query(finalQuery)
         st.write(finalResult)
 
             
