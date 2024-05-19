@@ -45,14 +45,6 @@ def main():
     Welcome to our e-commerce store! Please select one of the following queries from below to get started
     """)
 
-    # # Example of a KQL query format
-    # st.subheader('Required KQL Query Format:')
-    # st.code("""      
-    # TableName
-    # | where ColumnName == 'Value'
-    # | project ColumnName1, ColumnName2
-    # | take 10
-    # """, language='sql')
 
     # Define the queries
     queries = {
@@ -70,6 +62,13 @@ def main():
 
     # Get the selected query
     selected_query = queries[choice]
+
+    # Get user input
+    user_input = st.text_input('Enter your input')
+
+    # Modify the selected query with the user input
+    selected_query = selected_query.format(user_input)
+
 
     # Run the selected query when the button is clicked
     if st.button('Run query'):
