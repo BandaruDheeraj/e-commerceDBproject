@@ -83,7 +83,7 @@ def main():
         FROM ECommerce ec
         JOIN Orders o ON ec.Ecommerce_ID = o.Ecommerce_ID
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
-        WHERE o.Date_Placed = '[certain_date]' AND ec.Ecommerce_ID = [specific_ecommerce_ID]
+        WHERE o.Date_Placed = {} AND ec.Ecommerce_ID = {}
         GROUP BY ec.Name
         ORDER BY Total_Revenue
         LIMIT {};""",
@@ -94,7 +94,7 @@ def main():
             AVG(od.Payment_Total_Paid) AS Avg_Order_Value
         FROM Orders o
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
-        WHERE o.CustomerID = [specific_customer_ID]
+        WHERE o.CustomerID = {}
         AND o.Status = ‘Incomplete’
         GROUP BY o.Order_ID, o.Date_Placed, o.Status
         ORDER BY Total_Order_Value DESC
@@ -108,7 +108,7 @@ def main():
         JOIN Inventory i ON ec.Ecommerce_ID = i.Ecommerce_ID
         JOIN Product p ON i.Product_ID = p.Product_ID
         JOIN Supplier s ON p.Supplier_ID = s.SupplierID
-        WHERE s.SupplierID = [specific_supplier_ID]
+        WHERE s.SupplierID = {}
         ORDER BY c.Name_Last, c.Name_First
         LIMIT {};""",
 
@@ -135,13 +135,36 @@ def main():
     # Get the selected query
     selected_query = queries[choice]
 
+  
     # Check if the selected query requires a limit
-    if 'LIMIT {}' in selected_query:
+    if ' WHERE o.Date_Placed = {} AND ec.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
+        data_placed = st.text_input('Enter the date placed for "{}"'.format(choice))
+        ecommerce_id = st.text_input('Enter the e-commerce ID for "{}"'.format(choice))
         # Get user input for limit
-        user_input = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+        limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
 
         # Modify the selected query with the user input
-        selected_query = selected_query.format(user_input)
+        selected_query = selected_query.format(data_placed,ecommerce_id,limit)
+    elif 'WHERE o.CustomerID = {}' in selected_query and 'LIMIT {}' in selected_query:
+        customer_id = st.text_input('Enter the customer ID for "{}"'.format(choice))
+        # Get user input for limit
+        limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+
+        # Modify the selected query with the user input
+        selected_query = selected_query.format(customer_id, limit)
+    elif 'WHERE s.SupplierID = {}' in selected_query and 'LIMIT {}' in selected_query:
+        supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
+        # Get user input for limit
+        limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+
+        # Modify the selected query with the user input
+        selected_query = selected_query.format(supplier_id, limit)
+    elif 'LIMIT {}' in selected_query:
+        # Get user input for limit
+        limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+
+        # Modify the selected query with the user input
+        selected_query = selected_query.format(limit)
 
 
     # Run the selected query when the button is clicked
