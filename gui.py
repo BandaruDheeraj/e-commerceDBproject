@@ -1,5 +1,3 @@
-
-import mysql.connector
 import pandas as pd
 import streamlit as st
 import connection
@@ -7,8 +5,6 @@ import connection
 def main():
     db = "ecommerceDB"
 
-
-    # @st.cache(allow_output_mutation=True)
     def execute_query(query):
         # Define your connection details
         cur, conn = connection.get_connection()
@@ -34,17 +30,6 @@ def main():
     st.write("""
     Welcome to our e-commerce store! Please select one of the following queries from below to get started
     """)
-
-    # # Example of a KQL query format
-    # st.subheader('Required KQL Query Format:')
-    # st.code("""      
-    # TableName
-    # | where ColumnName == 'Value'
-    # | project ColumnName1, ColumnName2
-    # | take 10
-    # """, language='sql')
-
-    # Define the queries
     
     # Define the queries
     queries = {

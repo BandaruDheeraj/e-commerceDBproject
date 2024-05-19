@@ -3,7 +3,8 @@ import pandas as pd
 
 cur, conn = connection.get_connection()
 
-folder_path = '/Users/kirafujibayashi/Library/Mobile Documents/com~apple~CloudDocs/Documents/UChicago/Databases/Final Project/data_clean/final_ecommerceDB' 
+# folder_path = '/Users/kirafujibayashi/Library/Mobile Documents/com~apple~CloudDocs/Documents/UChicago/Databases/Final Project/data_clean/final_ecommerceDB' 
+folder_path = '/Users/dheer/Desktop/Projects/MPCS53001/e-commerceDBproject/clean_data-20240519T203307Z-001/clean_data'
 
 # Read in the csv files into python 
 ecommerce_df = pd.read_csv(f"{folder_path}/ecommerce.csv", encoding='ISO-8859-1', low_memory=False)
