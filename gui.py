@@ -45,7 +45,7 @@ def main():
         ORDER BY o.Date_Placed DESC
         LIMIT {}; """,
 
-        'Query 2': """ SELECT p.Product_ID, p.Description, p.Number_Photos, p.Price, COUNT(od.Order_ID) AS Total_Orders, AVG(p.Price) AS Avg_Price
+        'List all products from a specific supplier, including the total number of times each product has been ordered and the average price of these orders.': """ SELECT p.Product_ID, p.Description, p.Number_Photos, p.Price, COUNT(od.Order_ID) AS Total_Orders, AVG(p.Price) AS Avg_Price
         FROM Product p
         JOIN Supplier s ON p.Supplier_ID = s.Supplier_ID
         LEFT JOIN Stores st ON p.Product_ID = st.Product_ID
@@ -57,7 +57,7 @@ def main():
         GROUP BY p.Product_ID, p.Description, p.Number_Photos, p.Price
         ORDER BY Total_Orders DESC; """,
 
-        'Query 3': """ SELECT i.Inventory_ID, p.Product_ID, p.Description, p.Price, i.Quantity, COUNT(p.Product_ID) AS Total_Products
+        'Display all inventory items in an e-commerce store, including the total number of products in stock, grouped by product category.': """ SELECT i.Inventory_ID, p.Product_ID, p.Description, p.Price, i.Quantity, COUNT(p.Product_ID) AS Total_Products
         FROM Inventory i
         JOIN Stores st ON i.Inventory_ID = st.Inventory_ID
         JOIN Product p ON st.Product_ID = p.Product_ID
@@ -65,6 +65,64 @@ def main():
         GROUP BY i.Inventory_ID, p.Product_ID, p.Description, p.Price, i.Quantity
         ORDER BY Total_Products DESC
         LIMIT {};""",
+
+        'Summarize customers by city, including the total number of customers and the total value of their orders.': """ 
+        SELECT c.Address_City, COUNT(c.CustomerID) AS Total_Customers, 
+            SUM(od.Payment_Total_Paid) AS Total_Order_Value
+        FROM Customer c
+        JOIN Orders o ON c.CustomerID = o.CustomerID
+        JOIN Order_Details od ON o.Order_ID = od.Order_ID
+        GROUP BY c.Address_City
+        ORDER BY Total_Customers
+        LIMIT {};
+        """,
+
+        ' Display the total number of orders processed by an e-commerce company on a specific date, including the total revenue generated on that date.': """ 
+        SELECT ec.Name, COUNT(o.Order_ID) AS Total_Orders, 
+            SUM(od.Payment_Total_Paid) AS Total_Revenue
+        FROM ECommerce ec
+        JOIN Orders o ON ec.Ecommerce_ID = o.Ecommerce_ID
+        JOIN Order_Details od ON o.Order_ID = od.Order_ID
+        WHERE o.Date_Placed = '[certain_date]' AND ec.Ecommerce_ID = [specific_ecommerce_ID]
+        GROUP BY ec.Name
+        ORDER BY Total_Revenue
+        LIMIT {};""",
+
+        'Summarize all incomplete orders for a customer, including the total value and the average value of these orders.': """
+        SELECT o.Order_ID, o.Date_Placed, o.Status, 
+            SUM(od.Payment_Total_Paid) AS Total_Order_Value, 
+            AVG(od.Payment_Total_Paid) AS Avg_Order_Value
+        FROM Orders o
+        JOIN Order_Details od ON o.Order_ID = od.Order_ID
+        WHERE o.CustomerID = [specific_customer_ID]
+        AND o.Status = ‘Incomplete’
+        GROUP BY o.Order_ID, o.Date_Placed, o.Status
+        ORDER BY Total_Order_Value DESC
+        LIMIT {};""",
+
+        'Find all customers that have made purchases from a specific supplier': """
+        SELECT DISTINCT c.CustomerID, c.Name_First, c.Name_Last
+        FROM Customer c
+        JOIN Purchases pu ON c.CustomerID = pu.CustomerID
+        JOIN E-Commerce ec ON pu.Ecommerce_ID = ec.Ecommerce_ID
+        JOIN Inventory i ON ec.Ecommerce_ID = i.Ecommerce_ID
+        JOIN Product p ON i.Product_ID = p.Product_ID
+        JOIN Supplier s ON p.Supplier_ID = s.SupplierID
+        WHERE s.SupplierID = [specific_supplier_ID]
+        ORDER BY c.Name_Last, c.Name_First
+        LIMIT {};""",
+
+        'Find all processed orders with a total value greater than $1000, including the customer details and the list of products in each order.': """
+        SELECT o.Order_ID, o.Date_Placed, o.Status, c.Name_First, c.Name_Last, 
+            SUM(od.Payment_Total_Paid) AS Total_Order_Value
+        FROM Orders o
+        JOIN Customer c ON o.CustomerID = c.CustomerID
+        JOIN Order_Details od ON o.Order_ID = od.Order_ID
+        WHERE o.Status = ‘Processed’
+        GROUP BY o.Order_ID, o.Date_Placed, o.Status, c.Name_First, c.Name_Last
+        HAVING SUM(od.Payment_Total_Paid) > 1000
+        ORDER BY Total_Order_Value DESC
+        LIMIT {};"""
     }
 
     # Display the radio buttons
