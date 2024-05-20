@@ -25,7 +25,7 @@ inventory_df = pd.read_csv(f"{folder_path}/ecommerce_inventory.csv", encoding='I
 ecommerce_df = ecommerce_df[['Ecommerce_ID', 'Name', 'url']]
 customers_df = customers_df[['Customer_ID', 'Name_First', 'Name_Last', 'Username', 'Password', 'Address_Street', 'Address_City', 'Address_State', 'Address_Zipcode', 'Phone_Number']]
 purchases_df = purchases_df[['Ecommerce_ID', 'Customer_ID']]
-orders_df = orders_df[['Order_ID', 'Ecommerce_ID', 'Customer_ID', 'Date_Placed']]
+orders_df = orders_df[['Order_ID', 'Ecommerce_ID', 'Customer_ID', 'Date_Placed', 'status']]
 order_details_df = order_details_df[['Order_ID', 'Order_Detail_ID', 'Payment_Method', 'Payment_Total_Paid', 'Order_Status', 'Start_City', 'End_City', 'Tracking_Number']]
 suppliers_df = suppliers_df[['Supplier_ID', 'Supplier_Name', 'Address_Street', 'Address_City', 'Address_State', 'Address_Zipcode', 'Phone_Number', 'Date_Placed']]
 products_df = products_df[['Product_ID', 'Description', 'Number_Photos', 'Price', 'Supplier_ID']]
@@ -58,8 +58,8 @@ purchases_values = purchases_df.to_records(index=False).tolist()
 
 # Orders Table
 orders_query = """
-INSERT INTO Orders (Order_ID, Ecommerce_ID, Customer_ID, Date_Placed)
-VALUES (%s, %s, %s, %s)
+INSERT INTO Orders (Order_ID, Ecommerce_ID, Customer_ID, Date_Placed, Status)
+VALUES (%s, %s, %s, %s, %s)
 """
 orders_values = orders_df.to_records(index=False).tolist()
 
