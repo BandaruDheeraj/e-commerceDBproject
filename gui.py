@@ -33,7 +33,8 @@ def main():
     
     # Define the queries
     queries = {
-        'Retrieve all orders for a customer, including order details, product details, and supplier information, where the order starts from Chicago.': """ SELECT o.Order_ID, o.Date_Placed, o.Status, od.Start_City, od.End_City, p.Description, p.Price, s.Supplier_Name
+        'Retrieve all orders for a customer, including order details, product details, and supplier information, where the order starts from Chicago.': """ 
+        SELECT o.Order_ID, o.Date_Placed, o.Status, od.Start_City, od.End_City, p.Description, p.Price, s.Supplier_Name
         FROM Orders o
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
         JOIN Ecommerce ec ON ec.Ecommerce_ID = o.Ecommerce_ID
@@ -67,10 +68,10 @@ def main():
         LIMIT {};""",
 
         'Summarize customers by city, including the total number of customers and the total value of their orders.': """ 
-        SELECT c.Address_City, COUNT(c.CustomerID) AS Total_Customers, 
+        SELECT c.Address_City, COUNT(c.Customer_ID) AS Total_Customers, 
             SUM(od.Payment_Total_Paid) AS Total_Order_Value
         FROM Customer c
-        JOIN Orders o ON c.CustomerID = o.CustomerID
+        JOIN Orders o ON c.Customer_ID = o.Customer_ID
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
         GROUP BY c.Address_City
         ORDER BY Total_Customers
@@ -83,7 +84,7 @@ def main():
         FROM ECommerce ec
         JOIN Orders o ON ec.Ecommerce_ID = o.Ecommerce_ID
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
-        WHERE o.Date_Placed = {} AND ec.Ecommerce_ID = {}
+        WHERE o.Date_Placed = '{}' AND ec.Ecommerce_ID = {}
         GROUP BY ec.Name
         ORDER BY Total_Revenue
         LIMIT {};""",
@@ -94,21 +95,21 @@ def main():
             AVG(od.Payment_Total_Paid) AS Avg_Order_Value
         FROM Orders o
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
-        WHERE o.CustomerID = {}
-        AND o.Status = ‘Incomplete’
+        WHERE o.Customer_ID = {}
+        AND o.Status = 'Incomplete'
         GROUP BY o.Order_ID, o.Date_Placed, o.Status
         ORDER BY Total_Order_Value DESC
         LIMIT {};""",
 
         'Find all customers that have made purchases from a specific supplier': """
-        SELECT DISTINCT c.CustomerID, c.Name_First, c.Name_Last
+        SELECT DISTINCT c.Customer_ID, c.Name_First, c.Name_Last
         FROM Customer c
-        JOIN Purchases pu ON c.CustomerID = pu.CustomerID
-        JOIN E-Commerce ec ON pu.Ecommerce_ID = ec.Ecommerce_ID
+        JOIN Purchases pu ON c.Customer_ID = pu.Customer_ID
+        JOIN ecommerce ec ON pu.Ecommerce_ID = ec.Ecommerce_ID
         JOIN Inventory i ON ec.Ecommerce_ID = i.Ecommerce_ID
         JOIN Product p ON i.Product_ID = p.Product_ID
-        JOIN Supplier s ON p.Supplier_ID = s.SupplierID
-        WHERE s.SupplierID = {}
+        JOIN Supplier s ON p.Supplier_ID = s.Supplier_ID
+        WHERE s.Supplier_ID = {}
         ORDER BY c.Name_Last, c.Name_First
         LIMIT {};""",
 
@@ -116,9 +117,9 @@ def main():
         SELECT o.Order_ID, o.Date_Placed, o.Status, c.Name_First, c.Name_Last, 
             SUM(od.Payment_Total_Paid) AS Total_Order_Value
         FROM Orders o
-        JOIN Customer c ON o.CustomerID = c.CustomerID
+        JOIN Customer c ON o.Customer_ID = c.Customer_ID
         JOIN Order_Details od ON o.Order_ID = od.Order_ID
-        WHERE o.Status = ‘Processed’
+        WHERE o.Status = 'Processed'
         GROUP BY o.Order_ID, o.Date_Placed, o.Status, c.Name_First, c.Name_Last
         HAVING SUM(od.Payment_Total_Paid) > 1000
         ORDER BY Total_Order_Value DESC
@@ -137,7 +138,7 @@ def main():
 
   
     # Check if the selected query requires a limit
-    if ' WHERE o.Date_Placed = {} AND ec.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
+    if ' WHERE o.Date_Placed =' in selected_query and 'AND ec.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         data_placed = st.text_input('Enter the date placed for "{}"'.format(choice))
         ecommerce_id = st.text_input('Enter the e-commerce ID for "{}"'.format(choice))
         # Get user input for limit
@@ -145,14 +146,14 @@ def main():
 
         # Modify the selected query with the user input
         selected_query = selected_query.format(data_placed,ecommerce_id,limit)
-    elif 'WHERE o.CustomerID = {}' in selected_query and 'LIMIT {}' in selected_query:
+    elif 'WHERE o.Customer_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         customer_id = st.text_input('Enter the customer ID for "{}"'.format(choice))
         # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
 
         # Modify the selected query with the user input
         selected_query = selected_query.format(customer_id, limit)
-    elif 'WHERE s.SupplierID = {}' in selected_query and 'LIMIT {}' in selected_query:
+    elif 'WHERE s.Supplier_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
         # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
