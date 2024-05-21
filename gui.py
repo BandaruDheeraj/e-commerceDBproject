@@ -26,7 +26,7 @@ def main():
     st.set_page_config(page_title='🦜🔗 E-Commerce App MPCS 53001')
     st.title('🦜🔗 E-Commerce App MPCS 53001')
 
-    # Display an introduction about KQL and its use in the app
+    # Display an introduction
     st.write("""
     Welcome to our e-commerce store! Please select one of the following queries from below to get started
     """)
@@ -45,6 +45,7 @@ def main():
         WHERE od.Start_City = 'Chicago'
         ORDER BY o.Date_Placed DESC
         LIMIT {}; """,
+
 
         'List all products from a specific supplier, including the total number of times each product has been ordered and the average price of these orders.': """ SELECT p.Product_ID, p.Description, p.Number_Photos, p.Price, COUNT(od.Order_ID) AS Total_Orders, AVG(p.Price) AS Avg_Price
         FROM Product p
@@ -107,7 +108,8 @@ def main():
         JOIN Purchases pu ON c.Customer_ID = pu.Customer_ID
         JOIN ecommerce ec ON pu.Ecommerce_ID = ec.Ecommerce_ID
         JOIN Inventory i ON ec.Ecommerce_ID = i.Ecommerce_ID
-        JOIN Product p ON i.Product_ID = p.Product_ID
+        JOIN Stores st ON i.Inventory_ID = st.Inventory_ID
+        JOIN Product p ON st.Product_ID = p.Product_ID
         JOIN Supplier s ON p.Supplier_ID = s.Supplier_ID
         WHERE s.Supplier_ID = {}
         ORDER BY c.Name_Last, c.Name_First
@@ -137,33 +139,25 @@ def main():
     selected_query = queries[choice]
 
   
-    # Check if the selected query requires a limit
+    # Check if the selected query requires any user input
     if ' WHERE o.Date_Placed =' in selected_query and 'AND ec.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         data_placed = st.text_input('Enter the date placed for "{}"'.format(choice))
         ecommerce_id = st.text_input('Enter the e-commerce ID for "{}"'.format(choice))
         # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
-
         # Modify the selected query with the user input
         selected_query = selected_query.format(data_placed,ecommerce_id,limit)
     elif 'WHERE o.Customer_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         customer_id = st.text_input('Enter the customer ID for "{}"'.format(choice))
-        # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
-
-        # Modify the selected query with the user input
         selected_query = selected_query.format(customer_id, limit)
     elif 'WHERE s.Supplier_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
-        # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
-
-        # Modify the selected query with the user input
         selected_query = selected_query.format(supplier_id, limit)
     elif 'LIMIT {}' in selected_query:
         # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
-
         # Modify the selected query with the user input
         selected_query = selected_query.format(limit)
 
