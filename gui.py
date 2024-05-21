@@ -23,8 +23,8 @@ def main():
         return df
 
     # Page title
-    st.set_page_config(page_title='🦜🔗 E-Commerce App MPCS 53001')
-    st.title('🦜🔗 E-Commerce App MPCS 53001')
+    st.set_page_config(page_title='🛒🛍️ E-Commerce App MPCS 53001')
+    st.title('🛒🛍️ E-Commerce App MPCS 53001')
 
     # Display an introduction
     st.write("""
@@ -128,7 +128,7 @@ def main():
         LIMIT {};"""
     }
 
-    # Display the radio buttons
+    # Display the selection buttons
     options = list(queries.keys())
     choice = st.radio('Choose a query to get started', options)
 
@@ -139,31 +139,33 @@ def main():
     selected_query = queries[choice]
 
   
-    # Check if the selected query requires any user input
+    # Check if the selected query requires any user input and get the required inputs
     if ' WHERE o.Date_Placed =' in selected_query and 'AND ec.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         data_placed = st.text_input('Enter the date placed for "{}"'.format(choice))
         ecommerce_id = st.text_input('Enter the e-commerce ID for "{}"'.format(choice))
-        # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
         # Modify the selected query with the user input
         selected_query = selected_query.format(data_placed,ecommerce_id,limit)
     elif 'WHERE i.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         supplier_id = st.text_input('Enter the E_Commerce ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+        # Modify the selected query with the user input
         selected_query = selected_query.format(supplier_id, limit)
     elif 'WHERE o.Customer_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         customer_id = st.text_input('Enter the customer ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+        # Modify the selected query with the user input
         selected_query = selected_query.format(customer_id, limit)
     elif 'WHERE s.Supplier_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+        # Modify the selected query with the user input
         selected_query = selected_query.format(supplier_id, limit)
     elif 'WHERE s.Supplier_ID = {}' in selected_query:
         supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
+        # Modify the selected query with the user input
         selected_query = selected_query.format(supplier_id)
     elif 'LIMIT {}' in selected_query:
-        # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
         # Modify the selected query with the user input
         selected_query = selected_query.format(limit)
