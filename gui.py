@@ -55,7 +55,7 @@ def main():
         LEFT JOIN Ecommerce ec ON i.Ecommerce_ID = ec.Ecommerce_ID
         LEFT JOIN Orders o ON ec.Ecommerce_ID = o.Ecommerce_ID
         LEFT JOIN Order_Details od ON o.Order_ID = od.Order_ID
-        WHERE s.Supplier_ID = 486975277
+        WHERE s.Supplier_ID = {}
         GROUP BY p.Product_ID, p.Description, p.Number_Photos, p.Price
         ORDER BY Total_Orders DESC; """,
 
@@ -63,7 +63,7 @@ def main():
         FROM Inventory i
         JOIN Stores st ON i.Inventory_ID = st.Inventory_ID
         JOIN Product p ON st.Product_ID = p.Product_ID
-        WHERE i.Ecommerce_ID = 605775548
+        WHERE i.Ecommerce_ID = {}
         GROUP BY i.Inventory_ID, p.Product_ID, p.Description, p.Price, i.Quantity
         ORDER BY Total_Products DESC
         LIMIT {};""",
@@ -147,10 +147,17 @@ def main():
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
         # Modify the selected query with the user input
         selected_query = selected_query.format(data_placed,ecommerce_id,limit)
+    elif 'WHERE i.Ecommerce_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
+        supplier_id = st.text_input('Enter the E_Commerce ID for "{}"'.format(choice))
+        limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
+        selected_query = selected_query.format(supplier_id, limit)
     elif 'WHERE o.Customer_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         customer_id = st.text_input('Enter the customer ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
         selected_query = selected_query.format(customer_id, limit)
+    elif 'WHERE s.Supplier_ID = {}' in selected_query:
+        supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
+        selected_query = selected_query.format(supplier_id)
     elif 'WHERE s.Supplier_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
