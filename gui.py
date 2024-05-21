@@ -155,13 +155,13 @@ def main():
         customer_id = st.text_input('Enter the customer ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
         selected_query = selected_query.format(customer_id, limit)
-    elif 'WHERE s.Supplier_ID = {}' in selected_query:
-        supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
-        selected_query = selected_query.format(supplier_id)
     elif 'WHERE s.Supplier_ID = {}' in selected_query and 'LIMIT {}' in selected_query:
         supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
         selected_query = selected_query.format(supplier_id, limit)
+    elif 'WHERE s.Supplier_ID = {}' in selected_query:
+        supplier_id = st.text_input('Enter the supplier ID for "{}"'.format(choice))
+        selected_query = selected_query.format(supplier_id)
     elif 'LIMIT {}' in selected_query:
         # Get user input for limit
         limit = st.number_input('Enter the amount of entries you want to see for "{}"'.format(choice), min_value=1, value=10, step=1)
